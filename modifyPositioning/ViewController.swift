@@ -12,11 +12,15 @@ import CoreLocation
 class ViewController: UIViewController ,CLLocationManagerDelegate{
     private let locationManager: CLLocationManager = {
         let locationManager =  CLLocationManager()
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.distanceFilter = 10
-        locationManager.startUpdatingLocation()
-        locationManager.requestAlwaysAuthorization()
+        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+//        locationManager.distanceFilter = 10
+//        locationManager.startUpdatingLocation()
+//        locationManager.requestAlwaysAuthorization()
         return locationManager
+    }()
+    private let currentLocation : CLLocation = {
+        let currentLocation = CLLocation(latitude: 31.167103637855593, longitude: 121.3849957673268)
+        return currentLocation
     }()
     private let longitudeLabel: UILabel = {
         let label = UILabel(frame: CGRect(x: 10, y: 100, width: UIScreen.main.bounds.width - 20, height: 40))
@@ -47,42 +51,66 @@ class ViewController: UIViewController ,CLLocationManagerDelegate{
         return label
     }()
     private let currentPostLabel: UILabel = {
-        let label = UILabel(frame: CGRect(x: 10, y: 300, width: UIScreen.main.bounds.width - 20, height: 300))
+        let label = UILabel(frame: CGRect(x: 10, y: 300, width: UIScreen.main.bounds.width - 20, height: 200))
         label.text = "当前位置"
         label.font = UIFont.boldSystemFont(ofSize: 15)
         label.textColor = UIColor.black
         label.numberOfLines = 0
         return label
     }()
+    private let updateButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: UIScreen.main.bounds.width/3, y: 500, width: UIScreen.main.bounds.width - 20, height: 100))
+        button.setTitle("更新", for: .normal)
+        button.setTitleColor(UIColor.black, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        return button
+    }()
     override func viewDidLoad() {
         super.viewDidLoad()
         self.locationManager.delegate = self
         self.setupView()
+        self.updateButton.addTarget(self, action: #selector(onClickUpdateButton), for: .touchUpInside)
+        CLGeocoder().reverseGeocodeLocation(currentLocation) { [weak self](placemarks, error) in
+            guard let weakSelf = self else {return}
+            weakSelf.setupData(placemarks: placemarks)
+        }
+        self.currentLatitudeLabel.text = "纬度:\(currentLocation.coordinate.latitude)"
+        self.currentLongitudeLabel.text = "经度:\(currentLocation.coordinate.longitude)"
     }
     
     private func setupView() {
+//        self.view.addSubview(longitudeLabel)
+//        self.view.addSubview(latitudeLabel)
         self.view.addSubview(currentLongitudeLabel)
         self.view.addSubview(currentLatitudeLabel)
-        self.view.addSubview(longitudeLabel)
-        self.view.addSubview(latitudeLabel)
         self.view.addSubview(currentPostLabel)
+        self.view.addSubview(updateButton)
     }
 
+    @objc private func onClickUpdateButton() {
+        locationManager.startUpdatingLocation()
+    }
+    private func setupData(placemarks:[CLPlacemark]? ) {
+        guard let placemarks = placemarks, placemarks.count > 0 else {return}
+        guard let currentCity = placemarks[0].locality else {
+            currentPostLabel.text = "无法定位当前城市"
+            locationManager.stopUpdatingLocation()
+            return
+        }
+        let placeMark = placemarks[0]
+        //具体地址
+        currentPostLabel.text = "\(placeMark.country  ?? ""),\(currentCity),\(placeMark.subLocality  ?? ""),\(placeMark.thoroughfare  ?? ""),\(placeMark.name  ?? "")"
+        locationManager.stopUpdatingLocation()
+    }
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last?.coordinate else {return}
         self.currentLatitudeLabel.text = "纬度:\(currentLocation.latitude)"
         self.currentLongitudeLabel.text = "经度:\(currentLocation.longitude)"
         //地理反编码 可以根据坐标(经纬度)确定位置信息(街道 门牌等)
         let geoCoder: CLGeocoder = CLGeocoder()
-        geoCoder.reverseGeocodeLocation(locations.last!) { (placemarks, error) in
-            guard let placemarks = placemarks, placemarks.count > 0 else {return}
-            guard let currentCity = placemarks[0].locality else {
-                self.currentPostLabel.text = "无法定位当前城市"
-                return
-            }
-            let placeMark = placemarks[0]
-            //具体地址
-            self.currentPostLabel.text = "\(placeMark.country  ?? ""),\(currentCity),\(placeMark.subLocality  ?? ""),\(placeMark.thoroughfare  ?? ""),\(placeMark.name  ?? "")"
+        geoCoder.reverseGeocodeLocation(locations.last!) { [weak self ](placemarks, error) in
+            guard let weakSelf = self else {return}
+            weakSelf.setupData(placemarks: placemarks)
         }
     }
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

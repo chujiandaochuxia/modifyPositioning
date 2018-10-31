@@ -9,3 +9,6 @@
 选择Run -> Options -> Defailt Location 选择本地 Location 文件
 ![Image text](https://raw.githubusercontent.com/yiruchujian/modifyPositioning/master/image-folder/2.png)
 
+将坐标修改为公司坐标
+![Image text](https://raw.githubusercontent.com/yiruchujian/modifyPositioning/master/image-folder/2.jpeg)
+![Image text](https://raw.githubusercontent.com/yiruchujian/modifyPositioning/master/image-folder/4.jpeg)

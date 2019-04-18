@@ -14,3 +14,6 @@
 ![Image text](https://raw.githubusercontent.com/yiruchujian/modifyPositioning/master/image-folder/2.png)
 
 
+定位改为永久定位 一次安装后定位一直在设置位置 当需要正确当前位置时需要 关机重启 
+
+下次使用需要再次在xcode运行

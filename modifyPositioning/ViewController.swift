@@ -15,10 +15,10 @@ class ViewController: UIViewController ,CLLocationManagerDelegate{
         locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
 //        locationManager.distanceFilter = 10
 //        locationManager.startUpdatingLocation()
-//        locationManager.requestAlwaysAuthorization()
+        locationManager.requestAlwaysAuthorization()
         return locationManager
     }()
-    private let currentLocation : CLLocation = {
+    private var currentLocation : CLLocation = {
         let currentLocation = CLLocation(latitude: 31.167103637855593, longitude: 121.3849957673268)
         return currentLocation
     }()
@@ -76,6 +76,7 @@ class ViewController: UIViewController ,CLLocationManagerDelegate{
         }
         self.currentLatitudeLabel.text = "纬度:\(currentLocation.coordinate.latitude)"
         self.currentLongitudeLabel.text = "经度:\(currentLocation.coordinate.longitude)"
+        locationManager.startUpdatingLocation()
     }
     
     private func setupView() {
@@ -100,12 +101,14 @@ class ViewController: UIViewController ,CLLocationManagerDelegate{
         let placeMark = placemarks[0]
         //具体地址
         currentPostLabel.text = "\(placeMark.country  ?? ""),\(currentCity),\(placeMark.subLocality  ?? ""),\(placeMark.thoroughfare  ?? ""),\(placeMark.name  ?? "")"
+        print(currentPostLabel.text)
         locationManager.stopUpdatingLocation()
     }
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last?.coordinate else {return}
         self.currentLatitudeLabel.text = "纬度:\(currentLocation.latitude)"
         self.currentLongitudeLabel.text = "经度:\(currentLocation.longitude)"
+        self.currentLocation = CLLocation(latitude: currentLocation.latitude, longitude: currentLocation.longitude)
         //地理反编码 可以根据坐标(经纬度)确定位置信息(街道 门牌等)
         let geoCoder: CLGeocoder = CLGeocoder()
         geoCoder.reverseGeocodeLocation(locations.last!) { [weak self ](placemarks, error) in

@@ -1,8 +1,7 @@
 # modifyPositioning
 更改iOS定位 swift
 
-使用须知: 需要Xcode 需要Xcode 需要Xcode xcode运行完之后不要断开数据线 每次打卡都需Xcode运行一次 
-问题还在研究中……
+使用须知: 需要Xcode 需要Xcode 需要Xcode xcode运行完之后不要断开数据线 打开苹果地图 产看当前位置是否已经变更 然后断开数据线 查看当前位置是否是坐标位置 当需要正确位置时 需要重启手机 下次打卡依旧需要在xcode 重新编译重复上述步骤 不重启手机定位会一直保持在坐标位置
 
 将坐标修改为公司坐标
 ![Image text](https://raw.githubusercontent.com/yiruchujian/modifyPositioning/master/image-folder/2.jpeg)

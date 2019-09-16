@@ -13,6 +13,10 @@
 ![Image text](https://raw.githubusercontent.com/yiruchujian/modifyPositioning/master/image-folder/2.png)
 
 
-定位改为永久定位 一次安装后定位一直在设置位置 当需要正确当前位置时需要 关机重启 
-
+定位改为永久定位 iOS11 一次安装后定位一直在设置位置 当需要正确当前位置时需要 关机重启 
 下次使用需要再次在xcode运行
+iOS12及以上 一段时间后会回到位置 暂时没找到是什么问题 希望大家有机会提供 怎么复现的
+所以目前使用场景只能是下班忘记打卡回家用自己电脑安装一下 打卡
+
+高德坐标 拾取器： https://lbs.amap.com/console/show/picker
+
